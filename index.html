@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive Sherlock Holmes Mystery Quiz - Quizizz Style">
+    <title>Sherlock Holmes Mystery Quiz</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #1a1209;
+            --bg-brown: #2d1f12;
+            --bg-section: #3d2a1a;
+            --text-cream: #f5e6d3;
+            --text-parchment: #e8d5b7;
+            --text-muted: #c4a77d;
+            --accent-gold: #d4a853;
+            --accent-copper: #b87333;
+            --accent-burgundy: #722f37;
+            --accent-green: #2e7d32;
+            --accent-red: #c62828;
+            --border-color: #5a4535;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-cream);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Background Image */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            background:
+                linear-gradient(to left, var(--bg-dark) 0%, var(--bg-dark) 40%, transparent 70%),
+                url("wallpapersden.com_sherlock-holmes-mysterious-art_wl.jpg") no-repeat left bottom / auto 90%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.7;
+            animation: subtleZoom 30s ease-in-out infinite alternate;
+        }
+
+        @keyframes subtleZoom {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* ============================================
+           TOP BAR - Timer & Progress
+           ============================================ */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(26, 18, 9, 0.95);
+            border-bottom: 2px solid var(--accent-copper);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .timer i {
+            font-size: 1.3rem;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .progress-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--border-color);
+            border: 2px solid var(--accent-copper);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: var(--accent-gold);
+            box-shadow: 0 0 10px var(--accent-gold);
+            transform: scale(1.2);
+        }
+
+        .progress-dot.completed {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .progress-text {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           PAGE CONTAINER
+           ============================================ */
+        .pages-container {
+            flex: 1;
+            position: relative;
+            margin-top: 70px;
+            overflow: hidden;
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .page.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        .page.exit {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+
+        /* ============================================
+           INTRO PAGE
+           ============================================ */
+        .intro-content {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .intro-content .icon {
+            font-size: 5rem;
+            color: var(--accent-gold);
+            margin-bottom: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .intro-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        .intro-content p {
+            font-size: 1.2rem;
+            color: var(--text-parchment);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .start-btn {
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-copper) 100%);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(212, 168, 83, 0.4);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(212, 168, 83, 0.6);
+        }
+
+        /* ============================================
+           QUESTION CARD
+           ============================================ */
+        .question-card {
+            background: linear-gradient(180deg, var(--bg-section) 0%, var(--bg-brown) 100%);
+            border-radius: 20px;
+            padding: 2.5rem 3rem;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent-burgundy), var(--accent-gold), var(--accent-copper));
+        }
+
+        .question-number {
+            display: inline-block;
+            background: var(--accent-burgundy);
+            color: var(--text-cream);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            color: var(--text-parchment);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .clue-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-gold);
+            margin: 1.5rem 0;
+        }
+
+        .clue-code {
+            font-family: 'Courier New', monospace;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: bold;
+            color: var(--accent-gold);
+            letter-spacing: 0.15em;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(212, 168, 83, 0.5);
+        }
+
+        .hint-text {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Resistor Diagram */
+        .resistor-visual {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .resistor-diagram {
+            background: linear-gradient(180deg, #d4c8a0 0%, #c8bc94 50%, #b8ac84 100%);
+            width: 200px;
+            height: 50px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .resistor-diagram::before,
+        .resistor-diagram::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 4px;
+            background: linear-gradient(180deg, #c0c0c0, #808080);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .resistor-diagram::before {
+            left: -35px;
+        }
+
+        .resistor-diagram::after {
+            right: -35px;
+        }
+
+        .band {
+            width: 14px;
+            height: 40px;
+            border-radius: 2px;
+        }
+
+        .band-orange {
+            background: #ff6600;
+        }
+
+        .band-brown {
+            background: #964B00;
+        }
+
+        .band-gold {
+            background: #FFD700;
+            margin-left: 15px;
+        }
+
+        /* Blockquote */
+        .riddle-quote {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-copper);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-style: italic;
+            line-height: 2;
+            margin: 1rem 0;
+        }
+
+        .riddle-translation {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-family: 'Lato', sans-serif;
+            margin-top: 1rem;
+            font-style: normal;
+        }
+
+        /* Answer Input */
+        .answer-section {
+            margin-top: 2rem;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.2rem;
+            font-family: 'Lato', sans-serif;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-cream);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
+        }
+
+        .answer-input.correct {
+            border-color: var(--accent-green);
+            background: rgba(46, 125, 50, 0.2);
+        }
+
+        .answer-input.incorrect {
+            border-color: var(--accent-red);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: linear-gradient(135deg, var(--accent-burgundy) 0%, #4a1c22 100%);
+            color: var(--text-cream);
+            border: 2px solid var(--accent-copper);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #8a3a44 0%, #5a2c32 100%);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback-msg {
+            text-align: center;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .feedback-msg.show {
+            display: block;
+        }
+
+        .feedback-msg.success {
+            background: rgba(46, 125, 50, 0.2);
+            color: #a5d6a7;
+        }
+
+        .feedback-msg.error {
+            background: rgba(198, 40, 40, 0.2);
+            color: #ef9a9a;
+        }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-copper) 100%);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .next-btn.show {
+            display: block;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 168, 83, 0.5);
+        }
+
+        /* ============================================
+           RESULTS PAGE
+           ============================================ */
+        .results-content {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .trophy-icon {
+            font-size: 6rem;
+            margin-bottom: 1.5rem;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .results-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: var(--bg-section);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .final-time {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin: 2rem 0;
+            text-shadow: 0 0 20px rgba(212, 168, 83, 0.5);
+        }
+
+        .play-again-btn {
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-copper) 100%);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-again-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(212, 168, 83, 0.5);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 0 1rem;
+                height: 60px;
+            }
+
+            .timer {
+                font-size: 1.2rem;
+            }
+
+            .pages-container {
+                margin-top: 60px;
+            }
+
+            .page {
+                padding: 1rem;
+            }
+
+            .question-card {
+                padding: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-text {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar" id="top-bar" style="display: none;">
+        <div class="timer">
+            <i class="fas fa-stopwatch"></i>
+            <span id="timer-display">00:00</span>
+        </div>
+        <div class="progress-indicator">
+            <div class="progress-dots">
+                <div class="progress-dot" id="dot-1"></div>
+                <div class="progress-dot" id="dot-2"></div>
+                <div class="progress-dot" id="dot-3"></div>
+            </div>
+            <span class="progress-text" id="progress-text">Question 1 of 3</span>
+        </div>
+    </div>
+
+    <!-- Pages Container -->
+    <div class="pages-container">
+
+        <!-- INTRO PAGE -->
+        <div class="page active" id="page-intro">
+            <div class="intro-content">
+                <div class="icon"><i class="fas fa-user-secret"></i></div>
+                <h1>Sherlock Holmes Mystery Quiz</h1>
+                <p>"The game is afoot!"<br>Solve 3 mysteries to prove your detective skills. Your time starts when you
+                    begin. Good luck!</p>
+                <button class="start-btn" onclick="startQuiz()">
+                    <i class="fas fa-play"></i> Begin Investigation
+                </button>
+            </div>
+        </div>
+
+        <!-- QUESTION 1: Telephone Keypad -->
+        <div class="page" id="page-q1">
+            <div class="question-card">
+                <span class="question-number">Question 1 of 3</span>
+                <h2 class="question-title"><i class="fas fa-phone-rotary"></i> The Telephone Cipher</h2>
+                <p class="question-text">
+                    A crumpled note found beside an old rotary telephone reveals a mysterious number sequence...
+                </p>
+                <div class="clue-box">
+                    <div class="clue-code">83377775552</div>
+                </div>
+                <p class="hint-text">
+                    <i class="fas fa-lightbulb"></i>
+                    Hint: Old phones have letters on number keys. Decode the message!
+                </p>
+                <div class="answer-section">
+                    <input type="text" id="answer-1" class="answer-input" placeholder="Enter the decoded word..."
+                        autocomplete="off">
+                    <button class="submit-btn" id="submit-1" onclick="checkAnswer(1)">
+                        <i class="fas fa-check"></i> Submit Answer
+                    </button>
+                    <div class="feedback-msg" id="feedback-1"></div>
+                    <button class="next-btn" id="next-1" onclick="nextQuestion(2)">
+                        Next Question <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUESTION 2: Resistor -->
+        <div class="page" id="page-q2">
+            <div class="question-card">
+                <span class="question-number">Question 2 of 3</span>
+                <h2 class="question-title"><i class="fas fa-bolt"></i> The Resistor Code</h2>
+                <p class="question-text">
+                    Among Tesla's effects, you find a mysterious electronic component. What value does it hold?
+                </p>
+                <div class="resistor-visual">
+                    <div class="resistor-diagram">
+                        <div class="band band-orange"></div>
+                        <div class="band band-orange"></div>
+                        <div class="band band-brown"></div>
+                        <div class="band band-gold"></div>
+                    </div>
+                </div>
+                <p class="hint-text">
+                    <i class="fas fa-palette"></i>
+                    Color bands: Orange, Orange, Brown, Gold
+                </p>
+                <div class="answer-section">
+                    <input type="text" id="answer-2" class="answer-input" placeholder="Enter resistance value..."
+                        autocomplete="off">
+                    <button class="submit-btn" id="submit-2" onclick="checkAnswer(2)">
+                        <i class="fas fa-check"></i> Submit Answer
+                    </button>
+                    <div class="feedback-msg" id="feedback-2"></div>
+                    <button class="next-btn" id="next-2" onclick="nextQuestion(3)">
+                        Final Question <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUESTION 3: Riddle -->
+        <div class="page" id="page-q3">
+            <div class="question-card">
+                <span class="question-number">Question 3 of 3</span>
+                <h2 class="question-title"><i class="fas fa-scroll"></i> The Final Riddle</h2>
+                <p class="question-text">
+                    Tesla's secret vault reveals an ancient riddle. What concept is being described?
+                </p>
+                <div class="riddle-quote">
+                    <span lang="si">"ගින්නෙන් දැවී අලුවී නොයන දේවල් දෑස් වසා බැලූ කල නුඹට පෙනෙවී..."</span>
+                    <p class="riddle-translation">
+                        "Things that don't burn to ashes in fire, you can only see when you close your eyes..."
+                    </p>
+                </div>
+                <p class="hint-text">
+                    <i class="fas fa-moon"></i>
+                    What cannot be burned, yet only visible in absence of light?
+                </p>
+                <div class="answer-section">
+                    <input type="text" id="answer-3" class="answer-input" placeholder="Enter your answer..."
+                        autocomplete="off">
+                    <button class="submit-btn" id="submit-3" onclick="checkAnswer(3)">
+                        <i class="fas fa-check"></i> Submit Answer
+                    </button>
+                    <div class="feedback-msg" id="feedback-3"></div>
+                    <button class="next-btn" id="next-3" onclick="showResults()">
+                        See Results <i class="fas fa-trophy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS PAGE -->
+        <div class="page" id="page-results">
+            <div class="results-content">
+                <div class="trophy-icon">🏆</div>
+                <h1><i class="fas fa-crown"></i> Case Solved!</h1>
+                <p>Congratulations, Detective! You've unraveled all the mysteries.</p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-value" id="total-questions">3</span>
+                        <span class="stat-label">Questions Solved</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="total-attempts">0</span>
+                        <span class="stat-label">Total Attempts</span>
+                    </div>
+                </div>
+
+                <p style="color: var(--text-muted); margin-bottom: 0.5rem;">Total Time</p>
+                <div class="final-time" id="final-time">00:00</div>
+
+                <button class="play-again-btn" onclick="location.reload()">
+                    <i class="fas fa-redo"></i> Play Again
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================
+        // GAME STATE
+        // ============================================
+        const Game = {
+            currentQuestion: 0,
+            totalQuestions: 3,
+            startTime: null,
+            timerInterval: null,
+            attempts: { 1: 0, 2: 0, 3: 0 },
+
+            answers: {
+                1: ['tesla'],
+                2: ['330', '330ω', '330ohm', '330ohms', '330 ohm', '330 ohms'],
+                3: ['darkness', 'dark', 'අඳුර', 'andura']
+            }
+        };
+
+        // ============================================
+        // START QUIZ
+        // ============================================
+        function startQuiz() {
+            // Show top bar
+            document.getElementById('top-bar').style.display = 'flex';
+
+            // Start timer
+            Game.startTime = Date.now();
+            Game.timerInterval = setInterval(updateTimer, 1000);
+
+            // Transition to first question
+            Game.currentQuestion = 1;
+            goToPage('page-q1');
+            updateProgress();
+
+            // Focus input
+            setTimeout(() => {
+                document.getElementById('answer-1').focus();
+            }, 600);
+        }
+
+        // ============================================
+        // TIMER
+        // ============================================
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - Game.startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').textContent = `${minutes}:${seconds}`;
+        }
+
+        function getFinalTime() {
+            const elapsed = Math.floor((Date.now() - Game.startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            return `${minutes}:${seconds}`;
+        }
+
+        // ============================================
+        // PAGE NAVIGATION
+        // ============================================
+        function goToPage(pageId) {
+            // Exit current page
+            document.querySelectorAll('.page.active').forEach(p => {
+                p.classList.remove('active');
+                p.classList.add('exit');
+            });
+
+            // Enter new page
+            setTimeout(() => {
+                document.querySelectorAll('.page.exit').forEach(p => p.classList.remove('exit'));
+                document.getElementById(pageId).classList.add('active');
+            }, 300);
+        }
+
+        // ============================================
+        // CHECK ANSWER
+        // ============================================
+        function checkAnswer(questionNum) {
+            const input = document.getElementById(`answer-${questionNum}`);
+            const feedback = document.getElementById(`feedback-${questionNum}`);
+            const submitBtn = document.getElementById(`submit-${questionNum}`);
+            const nextBtn = document.getElementById(`next-${questionNum}`);
+
+            const userAnswer = input.value.trim().toLowerCase();
+
+            if (!userAnswer) {
+                showFeedback(feedback, 'error', 'Please enter an answer!');
+                return;
+            }
+
+            Game.attempts[questionNum]++;
+
+            const correctAnswers = Game.answers[questionNum];
+            const isCorrect = correctAnswers.some(ans => userAnswer === ans || userAnswer.includes(ans));
+
+            if (isCorrect) {
+                // Correct!
+                input.classList.add('correct');
+                input.disabled = true;
+                submitBtn.disabled = true;
+
+                showFeedback(feedback, 'success', '🎉 Brilliant deduction, Detective!');
+
+                // Show next button
+                nextBtn.classList.add('show');
+
+                // Mark progress dot
+                document.getElementById(`dot-${questionNum}`).classList.add('completed');
+
+            } else {
+                // Wrong
+                input.classList.add('incorrect');
+                setTimeout(() => input.classList.remove('incorrect'), 500);
+
+                const messages = [
+                    'Not quite right. Think again!',
+                    'The clue eludes you. Try again!',
+                    'Incorrect. Examine the evidence!',
+                    'Wrong answer. Keep trying!'
+                ];
+                showFeedback(feedback, 'error', messages[Math.floor(Math.random() * messages.length)]);
+            }
+        }
+
+        // ============================================
+        // FEEDBACK
+        // ============================================
+        function showFeedback(element, type, message) {
+            element.className = `feedback-msg show ${type}`;
+            element.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'times-circle'}"></i> ${message}`;
+
+            if (type === 'error') {
+                setTimeout(() => element.classList.remove('show'), 2500);
+            }
+        }
+
+        // ============================================
+        // NEXT QUESTION
+        // ============================================
+        function nextQuestion(nextNum) {
+            Game.currentQuestion = nextNum;
+            goToPage(`page-q${nextNum}`);
+            updateProgress();
+
+            // Focus input
+            setTimeout(() => {
+                document.getElementById(`answer-${nextNum}`).focus();
+            }, 600);
+        }
+
+        // ============================================
+        // UPDATE PROGRESS
+        // ============================================
+        function updateProgress() {
+            document.getElementById('progress-text').textContent = `Question ${Game.currentQuestion} of ${Game.totalQuestions}`;
+            document.getElementById(`dot-${Game.currentQuestion}`).classList.add('active');
+        }
+
+        // ============================================
+        // SHOW RESULTS
+        // ============================================
+        function showResults() {
+            // Stop timer
+            clearInterval(Game.timerInterval);
+
+            // Calculate stats
+            const totalAttempts = Game.attempts[1] + Game.attempts[2] + Game.attempts[3];
+            document.getElementById('total-attempts').textContent = totalAttempts;
+            document.getElementById('final-time').textContent = getFinalTime();
+
+            // Hide top bar
+            document.getElementById('top-bar').style.display = 'none';
+
+            // Go to results
+            goToPage('page-results');
+        }
+
+        // ============================================
+        // KEYBOARD SUPPORT
+        // ============================================
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && Game.currentQuestion > 0) {
+                const nextBtn = document.getElementById(`next-${Game.currentQuestion}`);
+                if (nextBtn.classList.contains('show')) {
+                    nextBtn.click();
+                } else {
+                    document.getElementById(`submit-${Game.currentQuestion}`).click();
+                }
+            }
+        });
+
+        console.log('%c🔍 Sherlock Holmes Mystery Quiz', 'font-size: 20px; font-weight: bold; color: #d4a853;');
+    </script>
+</body>
+
+</html>
