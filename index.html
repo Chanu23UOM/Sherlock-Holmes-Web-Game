@@ -630,36 +630,370 @@
         }
 
         /* ============================================
-           RESPONSIVE
+           RESPONSIVE - TABLET
            ============================================ */
         @media (max-width: 768px) {
             .top-bar {
                 padding: 0 1rem;
-                height: 60px;
+                height: 56px;
             }
 
             .timer {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
+                gap: 0.5rem;
+            }
+
+            .timer i {
+                font-size: 1rem;
             }
 
             .pages-container {
-                margin-top: 60px;
+                margin-top: 56px;
             }
 
             .page {
                 padding: 1rem;
+                overflow-y: auto;
             }
 
             .question-card {
                 padding: 1.5rem;
+                border-radius: 16px;
+                max-height: calc(100vh - 80px);
+                overflow-y: auto;
+            }
+
+            .question-title {
+                font-size: 1.4rem;
+            }
+
+            .question-text {
+                font-size: 1rem;
+            }
+
+            .clue-code {
+                font-size: 1.5rem;
+                letter-spacing: 0.1em;
             }
 
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
             .progress-text {
                 display: none;
+            }
+
+            .progress-dot {
+                width: 12px;
+                height: 12px;
+            }
+
+            .intro-content .icon {
+                font-size: 3.5rem;
+            }
+
+            .intro-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .intro-content p {
+                font-size: 1rem;
+            }
+
+            .start-btn {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* ============================================
+           RESPONSIVE - MOBILE PHONES
+           ============================================ */
+        @media (max-width: 480px) {
+
+            html,
+            body {
+                overflow-x: hidden;
+            }
+
+            /* Allow scrolling on mobile */
+            body {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .top-bar {
+                height: 50px;
+                padding: 0 0.75rem;
+            }
+
+            .timer {
+                font-size: 1rem;
+            }
+
+            .pages-container {
+                margin-top: 50px;
+                min-height: calc(100vh - 50px);
+            }
+
+            .page {
+                padding: 0.75rem;
+                align-items: flex-start;
+                padding-top: 1rem;
+            }
+
+            /* Question Card Mobile */
+            .question-card {
+                padding: 1.25rem;
+                border-radius: 12px;
+                max-width: 100%;
+            }
+
+            .question-number {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+                margin-bottom: 1rem;
+            }
+
+            .question-title {
+                font-size: 1.25rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .question-text {
+                font-size: 0.95rem;
+                line-height: 1.6;
+                margin-bottom: 1rem;
+            }
+
+            /* Clue boxes */
+            .clue-box {
+                padding: 1rem 1.25rem;
+                margin: 1rem 0;
+            }
+
+            .clue-code {
+                font-size: 1.3rem;
+                letter-spacing: 0.08em;
+                word-break: break-all;
+            }
+
+            .hint-text {
+                font-size: 0.85rem;
+            }
+
+            /* Resistor diagram */
+            .resistor-visual {
+                margin: 1rem 0;
+                transform: scale(0.85);
+            }
+
+            /* Riddle quote */
+            .riddle-quote {
+                padding: 1rem 1.25rem;
+                font-size: 1.1rem;
+                line-height: 1.8;
+            }
+
+            .riddle-translation {
+                font-size: 0.9rem;
+                margin-top: 0.75rem;
+            }
+
+            /* Answer input - touch friendly */
+            .answer-section {
+                margin-top: 1.5rem;
+            }
+
+            .answer-input {
+                padding: 0.9rem 1rem;
+                font-size: 1rem;
+                border-radius: 10px;
+                /* Prevent iOS zoom on focus */
+                font-size: 16px;
+            }
+
+            .submit-btn {
+                padding: 0.9rem;
+                font-size: 0.95rem;
+                border-radius: 10px;
+                /* Touch-friendly size */
+                min-height: 48px;
+            }
+
+            .next-btn {
+                padding: 0.9rem;
+                font-size: 0.95rem;
+                border-radius: 10px;
+                min-height: 48px;
+            }
+
+            .feedback-msg {
+                font-size: 0.9rem;
+                padding: 0.75rem;
+            }
+
+            /* Intro page mobile */
+            .intro-content {
+                padding: 1rem;
+            }
+
+            .intro-content .icon {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+            }
+
+            .intro-content h1 {
+                font-size: 1.5rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .intro-content p {
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
+                line-height: 1.6;
+            }
+
+            .start-btn {
+                padding: 0.9rem 2rem;
+                font-size: 0.95rem;
+                width: 100%;
+                min-height: 48px;
+            }
+
+            /* Results page mobile */
+            .results-content {
+                padding: 1rem;
+            }
+
+            .trophy-icon {
+                font-size: 4rem;
+                margin-bottom: 1rem;
+            }
+
+            .results-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                gap: 0.75rem;
+                margin: 1.5rem 0;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .final-time {
+                font-size: 2.5rem;
+                margin: 1.5rem 0;
+            }
+
+            .play-again-btn {
+                padding: 0.9rem 2rem;
+                font-size: 0.95rem;
+                width: 100%;
+                min-height: 48px;
+            }
+
+            /* Background adjustments for mobile */
+            body::before {
+                background-size: auto 60%;
+                opacity: 0.5;
+            }
+
+            /* Progress dots */
+            .progress-dots {
+                gap: 0.4rem;
+            }
+
+            .progress-dot {
+                width: 10px;
+                height: 10px;
+            }
+        }
+
+        /* ============================================
+           VERY SMALL PHONES (iPhone SE, etc.)
+           ============================================ */
+        @media (max-width: 360px) {
+            .question-card {
+                padding: 1rem;
+            }
+
+            .question-title {
+                font-size: 1.1rem;
+            }
+
+            .clue-code {
+                font-size: 1.1rem;
+            }
+
+            .riddle-quote {
+                font-size: 1rem;
+            }
+
+            .intro-content h1 {
+                font-size: 1.3rem;
+            }
+
+            .trophy-icon {
+                font-size: 3rem;
+            }
+
+            .final-time {
+                font-size: 2rem;
+            }
+        }
+
+        /* ============================================
+           LANDSCAPE MODE MOBILE
+           ============================================ */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .top-bar {
+                height: 45px;
+            }
+
+            .pages-container {
+                margin-top: 45px;
+            }
+
+            .page {
+                padding: 0.5rem;
+            }
+
+            .question-card {
+                padding: 1rem;
+                max-height: calc(100vh - 55px);
+            }
+
+            .intro-content .icon {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .intro-content h1 {
+                font-size: 1.3rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .intro-content p {
+                font-size: 0.85rem;
+                margin-bottom: 1rem;
+            }
+
+            .trophy-icon {
+                font-size: 2.5rem;
             }
         }
     </style>
